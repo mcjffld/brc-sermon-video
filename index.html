@@ -1,0 +1,59 @@
+
+<html>
+    <head>
+    
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://dcascn3rg03ga.cloudfront.net/appkit/v1.3/appkit.css" />
+        <script type="text/javascript">
+    
+            $( document ).ready( function () {
+    
+                $.getJSON("/api/video",
+                    function(data) {
+                        console.log ('have data')
+    
+                        $.each(data.items, function(id, item) {
+                            console.log (id)
+                            if (id < 4) {
+    
+                                var contentItem = $('<div><iframe width="700" height="400" src="https://www.youtube.com/embed/' + item.id.videoId+'"></iframe></div>')
+
+                                contentItem.attr("id","item_" + id);
+                                contentItem.attr("class","item");
+                                contentItem.hide();
+    
+                                $('<li class="control" id="' + id + '"><a href="#">' + item.snippet.title + '</a></li>').appendTo('ul');
+    
+                                contentItem.appendTo('.screen');
+                            }
+                        });
+    
+                        $(".control").click(function() {
+                            $(".item").hide();
+                            $(".item").postMessage('{"event":"command","func":"pauseVideo","args":""}', '*')
+                            $("#item_" + this.id).show();
+                        });
+    
+                        $("#item_0").show();
+                    }
+                );
+            });
+    
+        </script>
+    </head>
+    <body>
+    
+        <header class="center_stage">
+            <h1>Recent Videos</h1>
+            <nav class="stage-tabs">
+                <ul>
+                </ul>
+            </nav>
+            <div class="context_bar"></div>
+        </header>
+    
+        <div class="screen"></div>
+    
+    
+    </body>
+    </html>
