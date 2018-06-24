@@ -5,36 +5,47 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
         <link rel="stylesheet" href="https://dcascn3rg03ga.cloudfront.net/appkit/v1.3/appkit.css" />
         <script type="text/javascript">
-    
+
+            var tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            var firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+            var player;
+
+            var videoData = []
+
+            function startVideo( id ) {
+                if (player) {
+                    player.loadVideoById(videoData[id])
+                } else {
+                    player = new YT.Player('player', {
+                        height: '390',
+                        width: '640',
+                        videoId: videoData[id],
+                    })
+                }
+            }
             $( document ).ready( function () {
     
                 $.getJSON("/api/video",
                     function(data) {
-                        console.log ('have data')
     
                         $.each(data.items, function(id, item) {
-                            console.log (id)
                             if (id < 4) {
-    
-                                var contentItem = $('<div><iframe width="700" height="400" src="https://www.youtube.com/embed/' + item.id.videoId+'"></iframe></div>')
-
-                                contentItem.attr("id","item_" + id);
-                                contentItem.attr("class","item");
-                                contentItem.hide();
+                                videoData.push(item.id.videoId)
     
                                 $('<li class="control" id="' + id + '"><a href="#">' + item.snippet.title + '</a></li>').appendTo('ul');
     
-                                contentItem.appendTo('.screen');
+                                
                             }
                         });
     
+                        startVideo(0)
+
                         $(".control").click(function() {
-                            $(".item").hide();
-                            $(".item").postMessage('{"event":"command","func":"pauseVideo","args":""}', '*')
-                            $("#item_" + this.id).show();
+                            startVideo(this.id)
                         });
-    
-                        $("#item_0").show();
                     }
                 );
             });
@@ -52,7 +63,7 @@
             <div class="context_bar"></div>
         </header>
     
-        <div class="screen"></div>
+        <div id="player"></div>
     
     
     </body>
