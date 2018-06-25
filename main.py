@@ -22,13 +22,18 @@ from googleapiclient.discovery import build
 
 from datetime import datetime, timedelta
 
-import rfc3339 
+import cloudstorage as gcs
+
+gcs_file = gcs.open('data.json')
+contents = gcs_file.read()
+gcs_file.close()
 
 search_date = datetime.now() - timedelta(days=50)
 
 FORMAT='%Y-%m-%dT00:00:00Z'
 
-API_KEY = "AIzaSyCLblmIG79BNiHAGgrzzly6aNJOlFuSQR0"
+API_KEY = json.dumps(contents)['key']
+
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 
